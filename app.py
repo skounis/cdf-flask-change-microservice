@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import jsonify
+from flask import jsonify, request
 app = Flask(__name__)
 
 def change(amount):
@@ -31,6 +31,16 @@ def hello():
     print("I am inside hello world")
     return 'Hello World! I can make change at route: /change'
 
+# {"amount": "1.34"}
+@app.route('/change', methods=['POST'])
+def changepostroute():
+    content = request.json
+    print(f"content posted: {content}")
+    amount_raw = content["amount"]
+    result = change(float(amount_raw))
+    return jsonify(result)
+    
+
 @app.route('/change/<dollar>/<cents>')
 def changeroute(dollar, cents):
     print(f"Make Change for {dollar}.{cents}")
@@ -50,4 +60,4 @@ def change100route(dollar, cents):
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)
